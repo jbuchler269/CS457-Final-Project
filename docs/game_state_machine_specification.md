@@ -4,39 +4,35 @@ The server state engine governs player session lifetimes, game setup, turn contr
 2. Mermaid FSM Diagram (stateDiagram-v2)
 stateDiagram-v2
     [*] --> INIT
-
-    INIT --> WAITING_FOR_PLAYERS : Server Start / Listen
     
-    state WAITING_FOR_PLAYERS {
-        [*] --> P1_WAITING
-        P1_WAITING --> P2_CONNECTED : Connect(P1) / Send LOBBY_WAIT
-        P2_CONNECTED --> MATCH_READY : Connect(P2)
-    }
-
-    WAITING_FOR_PLAYERS --> GAME_START : Both Players Connected
-    WAITING_FOR_PLAYERS --> CLEANUP : P1 Disconnect / Reset Lobby
-
-    GAME_START --> PLAYER_1_TURN : Assign Roles & Broadcast GAME_START
-
-    state IN_GAME {
-        PLAYER_1_TURN --> EVALUATE_MOVE : Submit MOVE (P1)
-        PLAYER_2_TURN --> EVALUATE_MOVE : Submit MOVE (P2)
-
-        EVALUATE_MOVE --> PLAYER_2_TURN : Valid Move / Turn Switch (P2 Next)
-        EVALUATE_MOVE --> PLAYER_1_TURN : Valid Move / Turn Switch (P1 Next)
-
-        EVALUATE_MOVE --> PLAYER_1_TURN : Invalid Move or Out-of-Turn / Send ERROR (P1)
-        EVALUATE_MOVE --> PLAYER_2_TURN : Invalid Move or Out-of-Turn / Send ERROR (P2)
-    }
-
-    IN_GAME --> GAME_OVER : Win / Loss / Draw Condition
-    IN_GAME --> GAME_OVER : Disconnect / Opponent Forfeit Win
-
-    GAME_OVER --> CLEANUP : Broadcast GAME_OVER to Active Clients
-
-    CLEANUP --> WAITING_FOR_PLAYERS : Reclaim Resources & Reset State
+    INIT --> WAITING_P1 : Server Listen
+    
+    WAITING_P1 --> WAITING_P2 : Connect(P1) / Send LOBBY_WAIT
+    WAITING_P1 --> CLEANUP : P1 Disconnect
+    
+    WAITING_P2 --> GAME_START : Connect(P2)
+    WAITING_P2 --> CLEANUP : P1/P2 Disconnect
+    
+    GAME_START --> P1_TURN : Assign Roles & Broadcast GAME_START
+    
+    P1_TURN --> EVALUATE_MOVE : Submit MOVE (P1)
+    P2_TURN --> EVALUATE_MOVE : Submit MOVE (P2)
+    
+    EVALUATE_MOVE --> P2_TURN : Valid Move [P2 Next]
+    EVALUATE_MOVE --> P1_TURN : Valid Move [P1 Next]
+    
+    EVALUATE_MOVE --> P1_TURN : Invalid / Send ERROR (P1)
+    EVALUATE_MOVE --> P2_TURN : Invalid / Send ERROR (P2)
+    
+    EVALUATE_MOVE --> GAME_OVER : Win / Draw Detected
+    
+    P1_TURN --> GAME_OVER : P1/P2 Disconnect [Forfeit]
+    P2_TURN --> GAME_OVER : P1/P2 Disconnect [Forfeit]
+    
+    GAME_OVER --> CLEANUP : Broadcast GAME_OVER
+    
+    CLEANUP --> WAITING_P1 : Reset Game Session
     CLEANUP --> [*] : Server Shutdown
-
 
 3. Detailed State & Transition Specification
 3.1 INIT
