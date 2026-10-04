@@ -1,7 +1,7 @@
 # AI Prompting & Constraint Strategy
 
 ## 1. Strategy Overview
-To prevent AI coding tools from generating unconstrained socket boilerplate or neglecting custom framing and state rules, all AI interactions are governed by System Prompts that enforce our exact protocol blueprint and FSM contract.
+To prevent AI coding tools from neglecting custom framing and state rules, all AI interactions are governed by System Prompts that enforce the exact protocol blueprint and FSM contract.
 
 ---
 
