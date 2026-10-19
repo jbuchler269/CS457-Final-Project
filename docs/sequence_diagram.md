@@ -1,4 +1,3 @@
-```markdown
 # State & Score Broadcast Sequence Diagram
 
 ## 1. Overview & Narrative Flow
