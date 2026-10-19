@@ -10,25 +10,25 @@ This document provides the official Mermaid sequence diagram illustrating the co
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client1 as Client 1 (Player 1 / X)
-    participant Server as Game Server (Thread-Safe FSM)
-    actor Client2 as Client 2 (Player 2 / O)
+    actor P1 as Client 1 (Player X)
+    participant Server as Game Server
+    actor P2 as Client 2 (Player O)
 
-    Client1->>Server: MOVE (row: 0, col: 2)
-    Note over Server: Acquire server_lock<br>Validate: Is it Client 1's turn?<br>Is cell (0,2) empty?
+    P1->>Server: MOVE (row: 0, col: 2)
+    Note over Server: Acquire server_lock<br/>Validate turn & cell availability
     
     alt Valid Move
-        Note over Server: Update Game Board State<br>Switch Active Turn to Player 2<br>Release server_lock
-        Server-->>Client1: STATE_UPDATE (Board, Turn: Player 2)
-        Server-->>Client2: STATE_UPDATE (Board, Turn: Player 2)
+        Note over Server: Update Board State<br/>Switch Turn to Player O<br/>Release lock
+        Server-->>P1: STATE_UPDATE (Board, Turn: Player O)
+        Server-->>P2: STATE_UPDATE (Board, Turn: Player O)
     else Invalid Move or Out of Turn
-        Note over Server: Release server_lock
-        Server-->>Client1: ERROR ("OUT_OF_TURN" or "INVALID_CELL")
+        Note over Server: Release lock
+        Server-->>P1: ERROR ("OUT_OF_TURN" or "INVALID_CELL")
     end
 
-    Note over Server, Client2: Round Completion & Score Synchronization
+    Note over Server: Round Completion Check
     alt Round Win / Completion Detected
-        Note over Server: Update Round Scores & Leaderboard
-        Server-->>Client1: GAME_OVER (Winner, Final Scores)
-        Server-->>Client2: GAME_OVER (Winner, Final Scores)
+        Note over Server: Update Scores & Leaderboard
+        Server-->>P1: GAME_OVER (Winner, Final Scores)
+        Server-->>P2: GAME_OVER (Winner, Final Scores)
     end
