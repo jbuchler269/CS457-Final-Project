@@ -1,7 +1,7 @@
 # State & Score Broadcast Sequence Diagram
 
 ## 1. Overview & Narrative Flow
-This document provides the official Mermaid sequence diagram illustrating the complete round-trip message flow for **Cipher Clash**[cite: 5]. It models client move submissions, server authority validation under thread lock protection, branching logic for invalid or out-of-turn moves, and synchronous state/score broadcasts to all connected clients[cite: 3, 4].
+This document provides the official Mermaid sequence diagram illustrating the complete round-trip message flow for **Cipher Clash**. It models client move submissions, server authority validation under thread lock protection, branching logic for invalid or out-of-turn moves, and synchronous state/score broadcasts to all connected clients.
 
 ---
 
