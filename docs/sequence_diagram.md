@@ -10,25 +10,25 @@ This document provides the official Mermaid sequence diagram illustrating the co
 ```mermaid
 sequenceDiagram
     autonumber
-    actor P1 as Client 1 (Player X)
+    actor clientOne as Client 1 (Player X)
     participant Server as Game Server
-    actor P2 as Client 2 (Player O)
+    actor clientTwo as Client 2 (Player O)
 
-    P1->>Server: MOVE (row: 0, col: 2)
+    clientOne->>Server: MOVE (row: 0, col: 2)
     Note over Server: Acquire server_lock<br/>Validate turn & cell availability
     
     alt Valid Move
         Note over Server: Update Board State<br/>Switch Turn to Player O<br/>Release lock
-        Server-->>P1: STATE_UPDATE (Board, Turn: Player O)
-        Server-->>P2: STATE_UPDATE (Board, Turn: Player O)
+        Server-->>clientOne: STATE_UPDATE (Board, Turn: Player O)
+        Server-->>clientTwo: STATE_UPDATE (Board, Turn: Player O)
     else Invalid Move or Out of Turn
         Note over Server: Release lock
-        Server-->>P1: ERROR ("OUT_OF_TURN" or "INVALID_CELL")
+        Server-->>clientOne: ERROR ("OUT_OF_TURN" or "INVALID_CELL")
     end
 
     Note over Server: Round Completion Check
     alt Round Win / Completion Detected
         Note over Server: Update Scores & Leaderboard
-        Server-->>P1: GAME_OVER (Winner, Final Scores)
-        Server-->>P2: GAME_OVER (Winner, Final Scores)
+        Server-->>clientOne: GAME_OVER (Winner, Final Scores)
+        Server-->>clientTwo: GAME_OVER (Winner, Final Scores)
     end
